@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>PPGB Checker</title>
+
+<link rel="manifest" href="manifest.json">
+
+<style>
+
+body{
+font-family:Arial;
+background:#f2f4f8;
+margin:0;
+padding:20px;
+}
+
+.container{
+max-width:420px;
+margin:auto;
+background:white;
+padding:20px;
+border-radius:12px;
+box-shadow:0 4px 12px rgba(0,0,0,0.1);
+}
+
+h2{
+text-align:center;
+}
+
+input{
+width:100%;
+padding:12px;
+margin-bottom:12px;
+border-radius:8px;
+border:1px solid #ccc;
+font-size:16px;
+}
+
+button{
+width:100%;
+padding:14px;
+background:#0066ff;
+border:none;
+border-radius:8px;
+color:white;
+font-size:16px;
+font-weight:bold;
+}
+
+.result{
+margin-top:15px;
+padding:15px;
+border-radius:10px;
+text-align:center;
+font-weight:bold;
+}
+
+.green{
+background:#d4edda;
+color:#155724;
+}
+
+.red{
+background:#f8d7da;
+color:#721c24;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>PPGB Checker</h2>
+
+<input id="price" placeholder="Harga Voucher">
+<input id="kuota" placeholder="Kuota (GB)">
+<input id="validity" placeholder="Validity (Hari)">
+
+<button onclick="hitung()">CHECK</button>
+
+<div id="output"></div>
+
+</div>
+
+<script>
+
+function getGuidance(monthly){
+
+if(monthly>=32000 && monthly<=34000) return 5000;
+if(monthly>=35000 && monthly<=39000) return 5000;
+if(monthly>=40000 && monthly<=45000) return 4000;
+if(monthly>=46000 && monthly<=49000) return 4000;
+if(monthly>=50000 && monthly<=59000) return 3000;
+if(monthly>=60000 && monthly<=69000) return 2500;
+if(monthly>=70000 && monthly<=79000) return 2250;
+if(monthly>=80000 && monthly<=89000) return 2000;
+if(monthly>=90000 && monthly<=99000) return 1750;
+if(monthly>=100000 && monthly<=109000) return 1500;
+if(monthly>=110000 && monthly<=124000) return 1500;
+if(monthly>=125000 && monthly<=149000) return 1250;
+if(monthly>=150000 && monthly<=199000) return 1000;
+if(monthly>200000) return 500;
+
+return 0;
+
+}
+
+function hitung(){
+
+var price=parseFloat(document.getElementById("price").value);
+var kuota=parseFloat(document.getElementById("kuota").value);
+var validity=parseFloat(document.getElementById("validity").value);
+
+var ppgb=price/kuota;
+var monthly=(price/validity)*28;
+var guide=getGuidance(monthly);
+
+var status="NOT COMPLY";
+var color="red";
+
+if(ppgb>=guide){
+
+status="COMPLY";
+color="green";
+
+}
+
+document.getElementById("output").innerHTML=
+"<div class='result "+color+"'>"+
+"PPGB : "+Math.round(ppgb)+"<br>"+
+"Monthly Price : "+Math.round(monthly)+"<br>"+
+"Minimum PPGB : "+guide+"<br><br>"+
+status+
+"</div>";
+
+}
+
+</script>
+
+<script>
+
+if("serviceWorker" in navigator){
+navigator.serviceWorker.register("service-worker.js");
+}
+
+</script>
+
+</body>
+</html>
