@@ -7,147 +7,269 @@
 
 <title>PPGB Checker</title>
 
-<link rel="manifest" href="manifest.json">
-
 <style>
 
+*{
+box-sizing:border-box;
+font-family:system-ui, -apple-system, Segoe UI, Roboto;
+}
+
 body{
-font-family:Arial;
-background:#f2f4f8;
 margin:0;
-padding:20px;
+background:#f6f7fb;
+display:flex;
+align-items:center;
+justify-content:center;
+min-height:100vh;
+padding:16px;
 }
 
-.container{
+.card{
+
+width:100%;
 max-width:420px;
-margin:auto;
 background:white;
-padding:20px;
-border-radius:12px;
-box-shadow:0 4px 12px rgba(0,0,0,0.1);
+padding:24px;
+border-radius:16px;
+box-shadow:0 10px 30px rgba(0,0,0,0.08);
+
 }
 
-h2{
-text-align:center;
+.header{
+
+font-size:20px;
+font-weight:600;
+margin-bottom:6px;
+
+}
+
+.sub{
+
+font-size:13px;
+color:#777;
+margin-bottom:20px;
+
+}
+
+.field{
+margin-bottom:16px;
+}
+
+label{
+
+font-size:13px;
+font-weight:600;
+color:#444;
+
 }
 
 input{
+
 width:100%;
-padding:12px;
-margin-bottom:12px;
-border-radius:8px;
-border:1px solid #ccc;
+padding:14px;
+margin-top:6px;
+border-radius:10px;
+border:1px solid #e2e5ec;
 font-size:16px;
+
+}
+
+input:focus{
+
+outline:none;
+border-color:#4a7cff;
+
 }
 
 button{
+
 width:100%;
 padding:14px;
-background:#0066ff;
 border:none;
-border-radius:8px;
+border-radius:10px;
+background:#4a7cff;
 color:white;
+font-weight:600;
 font-size:16px;
-font-weight:bold;
+cursor:pointer;
+
+}
+
+button:active{
+transform:scale(.98);
 }
 
 .result{
-margin-top:15px;
-padding:15px;
-border-radius:10px;
+
+margin-top:18px;
+padding:16px;
+border-radius:12px;
 text-align:center;
-font-weight:bold;
+line-height:1.7;
+font-weight:600;
+
 }
 
 .green{
-background:#d4edda;
-color:#155724;
+
+background:#e8f7ee;
+color:#1e7e4c;
+
 }
 
 .red{
-background:#f8d7da;
-color:#721c24;
+
+background:#fdeaea;
+color:#b02a37;
+
+}
+
+.metric{
+
+font-size:14px;
+font-weight:500;
+
+}
+
+.status{
+
+margin-top:8px;
+font-size:18px;
+
 }
 
 </style>
 
 </head>
 
+
 <body>
 
-<div class="container">
+<div class="card">
 
-<h2>PPGB Checker</h2>
+<div class="header">PPGB Checker</div>
+<div class="sub">Validasi harga voucher outlet</div>
 
-<input id="price" placeholder="Harga Voucher">
-<input id="kuota" placeholder="Kuota (GB)">
-<input id="validity" placeholder="Validity (Hari)">
+<div class="field">
+<label>Harga Voucher</label>
+<input id="price" inputmode="numeric" placeholder="Contoh: 42,000">
+</div>
 
-<button onclick="hitung()">CHECK</button>
+<div class="field">
+<label>Kuota (GB)</label>
+<input id="kuota" inputmode="numeric" placeholder="Contoh: 5">
+</div>
+
+<div class="field">
+<label>Validity (Hari)</label>
+<input id="validity" inputmode="numeric" placeholder="Contoh: 28">
+</div>
+
+<button onclick="hitung()">Check Compliance</button>
 
 <div id="output"></div>
 
 </div>
 
+
 <script>
 
-function getGuidance(monthly){
+function parseNumber(value){
 
-if(monthly>=32000 && monthly<=34000) return 5000;
-if(monthly>=35000 && monthly<=39000) return 5000;
-if(monthly>=40000 && monthly<=45000) return 4000;
-if(monthly>=46000 && monthly<=49000) return 4000;
-if(monthly>=50000 && monthly<=59000) return 3000;
-if(monthly>=60000 && monthly<=69000) return 2500;
-if(monthly>=70000 && monthly<=79000) return 2250;
-if(monthly>=80000 && monthly<=89000) return 2000;
-if(monthly>=90000 && monthly<=99000) return 1750;
-if(monthly>=100000 && monthly<=109000) return 1500;
-if(monthly>=110000 && monthly<=124000) return 1500;
-if(monthly>=125000 && monthly<=149000) return 1250;
-if(monthly>=150000 && monthly<=199000) return 1000;
-if(monthly>200000) return 500;
-
-return 0;
+return Number(value.replace(/,/g,''))
 
 }
 
+function formatNumber(num){
+
+return num.toLocaleString('en-US')
+
+}
+
+function formatInput(input){
+
+input.addEventListener("input",function(){
+
+let value=this.value.replace(/,/g,'')
+
+if(value=="" || isNaN(value)) return
+
+this.value=formatNumber(Number(value))
+
+})
+
+}
+
+formatInput(document.getElementById("price"))
+formatInput(document.getElementById("kuota"))
+formatInput(document.getElementById("validity"))
+
+
+
+function getGuidance(monthly){
+
+if(monthly>=32000 && monthly<=34000) return 5000
+if(monthly>=35000 && monthly<=39000) return 5000
+if(monthly>=40000 && monthly<=45000) return 4000
+if(monthly>=46000 && monthly<=49000) return 4000
+if(monthly>=50000 && monthly<=59000) return 3000
+if(monthly>=60000 && monthly<=69000) return 2500
+if(monthly>=70000 && monthly<=79000) return 2250
+if(monthly>=80000 && monthly<=89000) return 2000
+if(monthly>=90000 && monthly<=99000) return 1750
+if(monthly>=100000 && monthly<=109000) return 1500
+if(monthly>=110000 && monthly<=124000) return 1500
+if(monthly>=125000 && monthly<=149000) return 1250
+if(monthly>=150000 && monthly<=199000) return 1000
+if(monthly>200000) return 500
+
+return 0
+
+}
+
+
+
 function hitung(){
 
-var price=parseFloat(document.getElementById("price").value);
-var kuota=parseFloat(document.getElementById("kuota").value);
-var validity=parseFloat(document.getElementById("validity").value);
+let price=parseNumber(document.getElementById("price").value)
+let kuota=parseNumber(document.getElementById("kuota").value)
+let validity=parseNumber(document.getElementById("validity").value)
 
-var ppgb=price/kuota;
-var monthly=(price/validity)*28;
-var guide=getGuidance(monthly);
+if(!price || !kuota || !validity){
 
-var status="NOT COMPLY";
-var color="red";
+alert("Mohon isi semua field")
+return
+
+}
+
+let ppgb=price/kuota
+let monthly=(price/validity)*28
+let guide=getGuidance(monthly)
+
+let status="NOT COMPLY"
+let color="red"
 
 if(ppgb>=guide){
 
-status="COMPLY";
-color="green";
+status="COMPLY"
+color="green"
 
 }
 
 document.getElementById("output").innerHTML=
-"<div class='result "+color+"'>"+
-"PPGB : "+Math.round(ppgb)+"<br>"+
-"Monthly Price : "+Math.round(monthly)+"<br>"+
-"Minimum PPGB : "+guide+"<br><br>"+
-status+
-"</div>";
 
-}
+`<div class="result ${color}">
 
-</script>
+<div class="metric">PPGB : ${formatNumber(Math.round(ppgb))}</div>
 
-<script>
+<div class="metric">Monthly Price : ${formatNumber(Math.round(monthly))}</div>
 
-if("serviceWorker" in navigator){
-navigator.serviceWorker.register("service-worker.js");
+<div class="metric">Minimum PPGB : ${formatNumber(guide)}</div>
+
+<div class="status">${status}</div>
+
+</div>`
+
 }
 
 </script>
